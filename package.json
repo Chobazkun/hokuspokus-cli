@@ -1,8 +1,8 @@
 {
   "name": "hokuspokus-cli",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "`hokuspokus-cli` is a CLI tool that leverages the OpenAI API to translate natural language descriptions into CLI commands.",
-  "main": "index.js",
+  "main": "./dist/index.js",
   "scripts": {
     "build": "tsc",
     "prepublishOnly": "tsc",
@@ -29,6 +29,6 @@
     "inquirer": "^8.2.6"
   },
   "bin": {
-    "hokuspokus": "./dist/hokuspokus.js"
+    "hokuspokus": "./dist/index.js"
   }
 }
