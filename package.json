@@ -1,7 +1,7 @@
 {
-  "name": "hokuspokus",
+  "name": "hokuspokus-cli",
   "version": "0.1.0",
-  "description": "`hokuspokus` is a CLI tool that leverages the OpenAI API to translate natural language descriptions into CLI commands.",
+  "description": "`hokuspokus-cli` is a CLI tool that leverages the OpenAI API to translate natural language descriptions into CLI commands.",
   "main": "index.js",
   "scripts": {
     "build": "tsc",
@@ -13,7 +13,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/username/repository.git"
+    "url": "git+https://github.com/Chobazkun/hokuspokus-cli"
   },
   "devDependencies": {
     "@types/inquirer": "^9.0.7",
