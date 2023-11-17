@@ -1,12 +1,12 @@
-# Hokuspokus CLI Tool
+# 🧙 Hokuspokus CLI Tool
 
 ## Overview
 `hokuspokus-cli` is a CLI tool that leverages the OpenAI API to generate CLI commands based on user prompts for various tools like AWS, GCP, etc.
 
 ## Features
-- **Configure OpenAI API Key**: Set up your OpenAI API key for the tool.
-- **Translate Descriptions to CLI Commands**: Input a description and get a suggested CLI command.
-- **Command Execution Confirmation**: Users can choose to execute the suggested command directly from the CLI.
+- **Configure OpenAI API Key 🔑**: Set up your OpenAI API key for the tool.
+- **Translate Descriptions to CLI Commands 💬**: Input a description and get a suggested CLI command.
+- **Command Execution Confirmation ✅**: Users can choose to execute the suggested command directly from the CLI.
 
 ## Installation
 
