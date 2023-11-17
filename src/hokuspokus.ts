@@ -10,6 +10,8 @@ import { exec } from 'child_process';
 import os from 'os';
 import path from 'path';
 
+const COMMAND_NOT_FOUND = 'COMMAND NOT FOUND : ';
+
 const configFilePath = path.join(os.homedir(), '.hokuspokus', 'config.json');
 
 const program = new Command();
@@ -64,7 +66,10 @@ async function generateCommand(prompt: string, tool: string) {
                 messages: [
                     {
                         role: "user",
-                        content: `Translate the following to an ${tool} CLI command. Return only the CLI command in the response, nothing else : ${prompt}`
+                        content: `Translate the following to an ${tool} CLI command. 
+                        If you are able to find a corresponding CLI command, reply only with the command and nothing else. 
+                        If you are not able to generate a command, respond by saying first '${COMMAND_NOT_FOUND}' followed by an explanation or suggestions on how to accomplish the task: 
+                        ${prompt}`
                     }
                 ],
                 temperature: 0.2  // Adjust as needed
@@ -78,6 +83,19 @@ async function generateCommand(prompt: string, tool: string) {
         );
 
         const cliCommand = response.data.choices[0].message.content.trim();
+
+        if (isCommandNotFound(cliCommand)) {
+            await inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'error',
+                    message: cliCommand, // Display the error message from GPT-4
+                    choices: ['OK'] // Provide an option for the user to acknowledge the error
+                }
+            ]);
+
+            return;
+        }
 
         // Prompt the user to accept the suggested command
         const userResponse = await inquirer.prompt([
@@ -106,6 +124,10 @@ async function generateCommand(prompt: string, tool: string) {
     } catch (error) {
         console.error('Error in translating text:', error);
     }
+}
+
+function isCommandNotFound(response: string): boolean {
+    return response.startsWith(COMMAND_NOT_FOUND);
 }
 
 
