@@ -10,7 +10,7 @@ export class AIResponseHandler {
         this.configManager = configManager;
     }
 
-    async generateTranslateCommand(prompt: string, tool: string): Promise<string> {
+    async generateCLI(prompt: string, tool: string): Promise<string> {
         const content = `Translate the following to an ${tool} CLI command. 
                          If you are able to find a corresponding CLI command, reply only with the command in one line and nothing else. Do not give further explanation, the CLI command is enough.
                          If you are not able to generate a command, reply by saying first '${AIResponseHandler.UNCLEAR_PROMPT}' 
@@ -18,7 +18,7 @@ export class AIResponseHandler {
         return this.getOpenAIResponse(content);
     }
 
-    async generateManualCommand(prompt: string): Promise<string> {
+    async generateManual(prompt: string): Promise<string> {
         const content = `I need the manual for a CLI command based on the following description. 
                          Please provide the complete manual for the command. 
                          If the version isn't specified in the description, provide the manual of the latest version of the CLI command.
@@ -46,6 +46,16 @@ export class AIResponseHandler {
         const script = responseLines.slice(1).join('\n');
 
         return { filename, script };
+    }
+
+    async generateCode(prompt: string): Promise<string> {
+        const content = `Generate a very short and consise code snippet for the following task: ${prompt}.
+                         Respond only with the code snippet. Add comments within the code to explains key lines.
+                         I do not want explanation of the code. I only want the code snippet.
+                         Be concise and respond with the most advanced and elegant way of writing the code, following the clean code, KISS, YAGNI, DRY and SOLID principles.
+                         If you cannot generate a snippet, start your response with '${AIResponseHandler.UNCLEAR_PROMPT}' 
+                         followed by an explanation or suggestions related to the task.`;
+        return this.getOpenAIResponse(content);
     }
 
 
