@@ -1,6 +1,6 @@
 import { Command } from 'commander';
-import { AIResponseHandler } from './AIResponseHandler';
-import { ConfigurationManager } from './ConfigurationManager';
+import { AIResponseHandler } from './AIResponseHandler.js';
+import { ConfigurationManager } from './ConfigurationManager.js';
 import { exec } from 'child_process';
 import fs from 'fs/promises';
 import inquirer from 'inquirer';
@@ -73,7 +73,7 @@ export class HokusPokusCLI {
                 {
                     type: 'confirm',
                     name: 'executeCommand',
-                    message: `Do you want to use the following CLI command? \n${cliAIReponse}`,
+                    message: `Do you want to use the following CLI command? \n\n${cliAIReponse}`,
                     default: false
                 }
             ]);
@@ -133,7 +133,7 @@ export class HokusPokusCLI {
                 {
                     type: 'confirm',
                     name: 'saveScript',
-                    message: `Would you like to save this script as '${filenameAIReponse}'?`,
+                    message: `Would you like to save this script as '${filenameAIReponse}'?\n`,
                     default: false
                 }
             ]);

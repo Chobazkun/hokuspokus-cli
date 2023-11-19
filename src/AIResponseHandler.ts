@@ -1,5 +1,6 @@
 import axios from 'axios';
-import { ConfigurationManager } from './ConfigurationManager';
+import ora from 'ora';
+import { ConfigurationManager } from './ConfigurationManager.js';
 
 export class AIResponseHandler {
     static UNCLEAR_PROMPT: string = 'UNCLEAR PROMPT : ';
@@ -64,23 +65,73 @@ export class AIResponseHandler {
     }
 
     private async getOpenAIResponse(content: string): Promise<string> {
-        const { openaiKey } = await this.configManager.readConfig();
+        const spinner = ora({
+            text: this.getRandomSpinnerMessage() + '🧙 ',
+            spinner: 'moon'
+        }).start();
 
-        const response = await axios.post(
-            'https://api.openai.com/v1/chat/completions',
-            {
-                model: "gpt-4",
-                messages: [{ role: "user", content }],
-                temperature: 0.2
-            },
-            {
-                headers: {
-                    'Authorization': `Bearer ${openaiKey}`,
-                    'Content-Type': 'application/json'
+        try {
+            const { openaiKey } = await this.configManager.readConfig();
+
+            const response = await axios.post(
+                'https://api.openai.com/v1/chat/completions',
+                {
+                    model: "gpt-4",
+                    messages: [{ role: "user", content }],
+                    temperature: 0.2
+                },
+                {
+                    headers: {
+                        'Authorization': `Bearer ${openaiKey}`,
+                        'Content-Type': 'application/json'
+                    }
                 }
-            }
-        );
+            );
 
-        return response.data.choices[0].message.content.trim();
+            spinner.stop();
+            return response.data.choices[0].message.content.trim();
+        } catch (error) {
+            spinner.stop();
+            throw error; // Rethrow the error to be handled by the caller
+        }
     }
+
+    private getRandomSpinnerMessage(): string {
+        const messages = [
+            '...Conjuring enchantments in the realm of code...',
+            '...Mixing magical potions in the Docker container...',
+            '...Casting ancient spells in Python...',
+            '...Summoning mystical powers from the cloud servers...',
+            '...Reading from the wizard’s tome of Stack Overflow...',
+            '...Gazing into the crystal ball of machine learning...',
+            '...Consulting with the arcane spirits of open-source...',
+            '...Weaving sorcerous incantations in binary...',
+            '...Harnessing eldritch energies from quantum computing...',
+            '...Unveiling the secrets of alchemy with AI algorithms...',
+            '...Brewing elixirs of wisdom in virtual environments...',
+            '...Unlocking the mysteries of the universe with neural networks...',
+            '...Taming dragons of the code realm...',
+            '...Deciphering ancient runes of JavaScript...',
+            '...Embarking on a quest for the missing semicolon...',
+            '...Whispering to the spirits of the cloud...',
+            '...Dancing with the pixies of pixels...',
+            '...Summoning the guardians of the git...',
+            '...Chanting incantations of the console log...',
+            '...Traversing the labyrinth of async-await...',
+            '...Navigating the seas of cyber sorcery...',
+            '...Exploring the dungeons of data...',
+            '...Crafting magical glyphs of HTML...',
+            '...Riding the dragons of dependency management...',
+            '...Questing for the legendary function of fate...',
+            '...Wandering through the enchanted forest of APIs...',
+            '...Concocting a brew in the cauldron of creativity...',
+            '...Invoking the spirits of serverless architecture...',
+            '...Decoding the enigmas of encryption...',
+            '...Venturing into the realm of recursive spells...'
+        ];
+
+
+        return messages[Math.floor(Math.random() * messages.length)];
+    }
+
 }
