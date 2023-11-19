@@ -29,9 +29,10 @@ export class AIResponseHandler {
     }
 
     async generateScript(prompt: string): Promise<{ filename: string, script: string }> {
-        const content = `Suggest a filename and generate a script for the following task: ${prompt}.
-                         Respond only with the name of the file and the code of the script, without anything else.
-                         The first line of your response should contain only the filename and nothing else. The content of the script should start from the second line. 
+        const content = `Create a filename and a corresponding script for this task : ${prompt}.
+                         Respond only with the name of the file and the code of the script.
+                         The first line of your response should contain only the filename and nothing else. 
+                         Starting from the second line, provide the script code and nothing else. 
                          If you cannot generate a script, start your response with '${AIResponseHandler.UNCLEAR_PROMPT}' 
                          followed by an explanation or suggestions related to the task.`;
         const response = await this.getOpenAIResponse(content);
