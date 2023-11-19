@@ -1,3 +1,4 @@
+
 # 🧙 Hokuspokus CLI Tool
 
 ## Overview
@@ -7,6 +8,9 @@
 - **Configure OpenAI API Key 🔑**: Set up your OpenAI API key for the tool.
 - **Translate Descriptions to CLI Commands 💬**: Input a description and get a suggested CLI command.
 - **Command Execution Confirmation ✅**: Users can choose to execute the suggested command directly from the CLI.
+- **Fetching Manuals 📚**: Retrieve the latest manual for a specific command based on a description.
+- **Generating Scripts 📜**: Create scripts in various programming languages or tools based on your description.
+- **Generating Code Snippets 🧩**: Generate short code snippets for quick tasks.
 
 ## Installation
 
@@ -21,11 +25,12 @@ npm install -g hokuspokus-cli
 If you are a developer and want to contribute to `hokuspokus-cli`, clone the repository and run the following command in the project directory to install dependencies:
 
 1. Run `npm install` to install the required dependencies.
-2. Use `npm link` to symlink the package globally for development testing.
+2. Run `npm run build` to locally build the project using parcel.
+3. Use `npm link` to symlink the package globally for development testing.
 
 ## Usage
 - **Configuration**:
-  - Run `hokuspokus-cli configure` to set up your OpenAI API key.
+  - Run `hokuspokus configure` to set up your OpenAI API key.
 
 - **Translating Text to CLI commands**:
   - Run `hokuspokus -t <tool> "<prompt>"` to receive a suggested CLI command for your description on the chosen tool.
@@ -50,7 +55,20 @@ If you are a developer and want to contribute to `hokuspokus-cli`, clone the rep
 
 ## Example
 ```bash
-hokuspokus -t aws "list the ec2 instances in Ireland region"
+# Configure OpenAI API Key
+hokuspokus configure
+
+# Translate Text to CLI Command
+hokuspokus -t aws "describe all instances in the us-east-1 region"
+
+# Fetch Command Manual
+hokuspokus -m "manual for git commit command"
+
+# Generate a Script
+hokuspokus -s "Python script to sort a list of numbers"
+
+# Generate a Code Snippet
+hokuspokus -c "JavaScript function to reverse a string"
 ```
 
 ## Contributing
