@@ -1,19 +1,20 @@
 import { Command } from 'commander';
-import { CommandGenerator } from './CommandGenerator';
+import { AIResponseHandler } from './AIResponseHandler';
 import { ConfigurationManager } from './ConfigurationManager';
 import { exec } from 'child_process';
+import fs from 'fs/promises';
 import inquirer from 'inquirer';
 import packageJson from '../package.json';
 
 export class HokusPokusCLI {
     program: Command;
-    commandGenerator: CommandGenerator;
+    commandGenerator: AIResponseHandler;
     configManager: ConfigurationManager;
 
     constructor() {
         this.program = new Command();
         this.configManager = new ConfigurationManager();
-        this.commandGenerator = new CommandGenerator(this.configManager);
+        this.commandGenerator = new AIResponseHandler(this.configManager);
         this.setupCommands();
     }
 
@@ -30,14 +31,21 @@ export class HokusPokusCLI {
 
         this.program
             .option('-t, --tool <type>', 'Specify the CLI tool (e.g., aws, gcp, git, ...)')
-            .option('-m, --man <command>', 'Get the latest manual for a specific command')
+            .option('-m, --man <command_prompt>', 'Get the latest manual for a specific command')
+            .option('-s, --script <script_prompt>', 'Generate a script in the specified language or tool')
             .argument('[prompt]', 'User prompt for generating a command')
             .action((prompt, options) => {
                 if (options.man) {
                     this.handleManualCommand(options.man);
-                } else {
-                    this.handleTranslateCommand(prompt, options.tool);
+                    return;
                 }
+
+                if (options.script) {
+                    this.handleScriptGeneration(options.script);
+                    return;
+                }
+
+                this.handleTranslateCommand(prompt, options.tool);
             });
     }
 
@@ -86,7 +94,6 @@ export class HokusPokusCLI {
 
     async handleManualCommand(prompt: string) {
         try {
-            console.log(prompt);
             const cliCommand = await this.commandGenerator.generateManualCommand(prompt);
 
             if (this.commandGenerator.isCommandNotFound(cliCommand)) {
@@ -111,6 +118,43 @@ export class HokusPokusCLI {
             ]);
         } catch (error) {
             console.error('Error in translating text:', error);
+        }
+    }
+
+    async handleScriptGeneration(prompt: string) {
+        try {
+            const { filename, script } = await this.commandGenerator.generateScript(prompt);
+
+            if (this.commandGenerator.isCommandNotFound(script)) {
+                // Refactor error handling
+                await inquirer.prompt([
+                    {
+                        type: 'list',
+                        name: 'error',
+                        message: script,
+                        choices: ['OK']
+                    }
+                ]);
+                return;
+            }
+
+            console.log("Generated Script:\n", script);
+
+            const userResponse = await inquirer.prompt([
+                {
+                    type: 'confirm',
+                    name: 'saveScript',
+                    message: `Would you like to save this script as '${filename}'?`,
+                    default: false
+                }
+            ]);
+
+            if (userResponse.saveScript) {
+                await fs.writeFile(filename, script);
+                console.log(`Script saved to ${filename}`);
+            }
+        } catch (error) {
+            console.error('Error in script generation:', error);
         }
     }
 
