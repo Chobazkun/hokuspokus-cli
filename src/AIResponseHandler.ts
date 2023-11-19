@@ -47,7 +47,12 @@ export class AIResponseHandler {
         return { filename, script };
     }
 
-    async getOpenAIResponse(content: string): Promise<string> {
+
+    isUserPromptUnclear(response: string): boolean {
+        return response.startsWith(AIResponseHandler.UNCLEAR_PROMPT);
+    }
+
+    private async getOpenAIResponse(content: string): Promise<string> {
         const { openaiKey } = await this.configManager.readConfig();
 
         const response = await axios.post(
@@ -66,9 +71,5 @@ export class AIResponseHandler {
         );
 
         return response.data.choices[0].message.content.trim();
-    }
-
-    isCommandNotFound(response: string): boolean {
-        return response.startsWith(AIResponseHandler.UNCLEAR_PROMPT);
     }
 }

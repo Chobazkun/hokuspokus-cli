@@ -18,7 +18,12 @@ export class HokusPokusCLI {
         this.setupCommands();
     }
 
-    setupCommands() {
+
+    run() {
+        this.program.parse(process.argv);
+    }
+
+    private setupCommands() {
         this.program
             .name('hokuspokus')
             .description('CLI tool for translating text into CLI commands using OpenAI')
@@ -36,7 +41,7 @@ export class HokusPokusCLI {
             .argument('[prompt]', 'User prompt for generating a command')
             .action((prompt, options) => {
                 if (options.man) {
-                    this.handleManualCommand(options.man);
+                    this.handleCommandManual(options.man);
                     return;
                 }
 
@@ -49,19 +54,12 @@ export class HokusPokusCLI {
             });
     }
 
-    async handleTranslateCommand(prompt: string, tool: string) {
+    private async handleTranslateCommand(prompt: string, tool: string) {
         try {
             const cliCommand = await this.commandGenerator.generateTranslateCommand(prompt, tool);
 
-            if (this.commandGenerator.isCommandNotFound(cliCommand)) {
-                await inquirer.prompt([
-                    {
-                        type: 'list',
-                        name: 'error',
-                        message: cliCommand,
-                        choices: ['OK']
-                    }
-                ]);
+            if (this.commandGenerator.isUserPromptUnclear(cliCommand)) {
+                await this.handleUserPromptUnclear(cliCommand);
                 return;
             }
 
@@ -92,19 +90,12 @@ export class HokusPokusCLI {
         }
     }
 
-    async handleManualCommand(prompt: string) {
+    private async handleCommandManual(prompt: string) {
         try {
-            const cliCommand = await this.commandGenerator.generateManualCommand(prompt);
+            const commandManual = await this.commandGenerator.generateManualCommand(prompt);
 
-            if (this.commandGenerator.isCommandNotFound(cliCommand)) {
-                await inquirer.prompt([
-                    {
-                        type: 'list',
-                        name: 'error',
-                        message: cliCommand,
-                        choices: ['OK']
-                    }
-                ]);
+            if (this.commandGenerator.isUserPromptUnclear(commandManual)) {
+                await this.handleUserPromptUnclear(commandManual);
                 return;
             }
 
@@ -112,29 +103,21 @@ export class HokusPokusCLI {
                 {
                     type: 'list',
                     name: 'Manual',
-                    message: cliCommand,
+                    message: commandManual,
                     choices: ['OK']
                 }
             ]);
         } catch (error) {
-            console.error('Error in translating text:', error);
+            console.error('Error in generating command manual:', error);
         }
     }
 
-    async handleScriptGeneration(prompt: string) {
+    private async handleScriptGeneration(prompt: string) {
         try {
             const { filename, script } = await this.commandGenerator.generateScript(prompt);
 
-            if (this.commandGenerator.isCommandNotFound(script)) {
-                // Refactor error handling
-                await inquirer.prompt([
-                    {
-                        type: 'list',
-                        name: 'error',
-                        message: script,
-                        choices: ['OK']
-                    }
-                ]);
+            if (this.commandGenerator.isUserPromptUnclear(script)) {
+                await this.handleUserPromptUnclear(script);
                 return;
             }
 
@@ -158,7 +141,14 @@ export class HokusPokusCLI {
         }
     }
 
-    run() {
-        this.program.parse(process.argv);
+    private async handleUserPromptUnclear(aiResponse: string): Promise<void> {
+        await inquirer.prompt([
+            {
+                type: 'list',
+                name: 'error',
+                message: aiResponse,
+                choices: ['OK']
+            }
+        ]);
     }
 }
