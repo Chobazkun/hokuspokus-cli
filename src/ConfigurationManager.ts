@@ -34,4 +34,14 @@ export class ConfigurationManager {
         const configData = await fs.readFile(this.configFilePath, 'utf-8');
         return JSON.parse(configData);
     }
+
+    async isOpenAIKeyConfigured(): Promise<boolean> {
+        try {
+            const config = await fs.readFile(this.configFilePath, 'utf8');
+            const { openaiKey } = JSON.parse(config);
+            return !!openaiKey;
+        } catch (error) {
+            return false;
+        }
+    }
 }

@@ -55,7 +55,17 @@ export class HokusPokusCLI {
             .action((code_prompt) => this.handleCodeCommand(code_prompt));
     }
 
+    private async verifyOpenAIKey(): Promise<boolean> {
+        if (!await this.configManager.isOpenAIKeyConfigured()) {
+            console.error('\n❌ Error: OpenAI API key is not configured. Please run "hokuspokus configure" first.');
+            return false;
+        }
+        return true;
+    }
+
     private async handleCliCommand(prompt: string) {
+        if (!await this.verifyOpenAIKey()) return;
+
         try {
             const cliAIReponse = await this.commandGenerator.generateCLI(prompt);
 
@@ -92,6 +102,8 @@ export class HokusPokusCLI {
     }
 
     private async handleManualCommand(prompt: string) {
+        if (!await this.verifyOpenAIKey()) return;
+
         try {
             const manualAIResponse = await this.commandGenerator.generateManual(prompt);
 
@@ -114,6 +126,8 @@ export class HokusPokusCLI {
     }
 
     private async handleScriptCommand(prompt: string) {
+        if (!await this.verifyOpenAIKey()) return;
+
         try {
             const { filename: filenameAIReponse, script: scriptAIResponse } = await this.commandGenerator.generateScript(prompt);
 
@@ -143,6 +157,8 @@ export class HokusPokusCLI {
     }
 
     private async handleCodeCommand(prompt: string) {
+        if (!await this.verifyOpenAIKey()) return;
+
         try {
             const codeAIReponse = await this.commandGenerator.generateCode(prompt);
 

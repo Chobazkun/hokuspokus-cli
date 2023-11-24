@@ -66,7 +66,7 @@ export class AIResponseHandler {
 
     private async getOpenAIResponse(content: string): Promise<string> {
         const spinner = ora({
-            text: this.getRandomSpinnerMessage() + '🧙 ',
+            text: `${this.getRandomSpinnerMessage()} 🧙 `,
             spinner: 'moon'
         }).start();
 
