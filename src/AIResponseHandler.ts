@@ -13,30 +13,30 @@ export class AIResponseHandler {
 
     async generateCLI(prompt: string): Promise<string> {
         const content = `Translate the following to a CLI command. 
-                         If you are able to find a corresponding CLI command, reply only with the command in one line and nothing else. Do not give further explanation, the CLI command is enough.
-                         If you are not able to generate a command, reply by saying first '${AIResponseHandler.UNCLEAR_PROMPT}' 
-                         followed by an explanation or suggestions on how to accomplish the task: ${prompt}`;
+                        If you are able to find a corresponding CLI command, reply only with the command in one line and nothing else. Do not give further explanation, the CLI command is enough.
+                        If you are not able to generate a command, reply by saying first '${AIResponseHandler.UNCLEAR_PROMPT}' 
+                        followed by an explanation or suggestions on how to accomplish the task: ${prompt}`;
 
         return this.getOpenAIResponse(this.cleanApiResponse(content));
     }
 
     async generateManual(prompt: string): Promise<string> {
         const content = `I need the manual or the documentation for the CLI command, the tool or the element mentioned in the following description. 
-                         Please provide the complete manual if it is a command. 
-                         If it is something else, provide the main documentation with only the essential explanations.
-                         If the version isn't specified in the description, provide the manual of the latest version.
-                         If there's no specific manual/documentation or the command is unclear, start your response with '${AIResponseHandler.UNCLEAR_PROMPT}', 
-                         followed by an explanation or suggestions on how to accomplish the task: ${prompt}`;
+                        Please provide the complete manual if it is a command. 
+                        If it is something else, provide the main documentation with only the essential explanations.
+                        If the version isn't specified in the description, provide the manual of the latest version.
+                        If there's no specific manual/documentation or the command is unclear, start your response with '${AIResponseHandler.UNCLEAR_PROMPT}', 
+                        followed by an explanation or suggestions on how to accomplish the task: ${prompt}`;
         return this.getOpenAIResponse(content);
     }
 
     async generateScript(prompt: string): Promise<{ filename: string, script: string }> {
         const content = `Create a filename and a corresponding script for this task : ${prompt}.
-                         Respond only with the name of the file and the code of the script.
-                         The first line of your response should contain only the filename and nothing else. 
-                         Starting from the second line, provide the script code and nothing else. 
-                         If you cannot generate a script, start your response with '${AIResponseHandler.UNCLEAR_PROMPT}' 
-                         followed by an explanation or suggestions related to the task.`;
+                        Respond only with the name of the file and the code of the script.
+                        The first line of your response should contain only the filename and nothing else. 
+                        Starting from the second line, provide the script code and nothing else. 
+                        If you cannot generate a script, start your response with '${AIResponseHandler.UNCLEAR_PROMPT}' 
+                        followed by an explanation or suggestions related to the task.`;
         const response = await this.getOpenAIResponse(content);
 
         if (response.startsWith(AIResponseHandler.UNCLEAR_PROMPT)) {
@@ -52,11 +52,30 @@ export class AIResponseHandler {
 
     async generateCode(prompt: string): Promise<string> {
         const content = `Generate a very short and consise code snippet for the following task: ${prompt}.
-                         Respond only with the code snippet. Add comments within the code to explains key lines.
-                         I do not want explanation of the code. I only want the code snippet.
-                         Be concise and respond with the most advanced and elegant way of writing the code, following the clean code, KISS, YAGNI, DRY and SOLID principles.
-                         If you cannot generate a snippet, start your response with '${AIResponseHandler.UNCLEAR_PROMPT}' 
-                         followed by an explanation or suggestions related to the task.`;
+                        Respond only with the code snippet. Add comments within the code to explains key lines.
+                        I do not want explanation of the code. I only want the code snippet.
+                        Be concise and respond with the most advanced and elegant way of writing the code, following the clean code, KISS, YAGNI, DRY and SOLID principles.
+                        If you cannot generate a snippet, start your response with '${AIResponseHandler.UNCLEAR_PROMPT}' 
+                        followed by an explanation or suggestions related to the task.`;
+        return this.getOpenAIResponse(content);
+    }
+
+    async generateSEAnswer(prompt: string): Promise<string> {
+        const content = `Respond as a software engineering and programming expert with a concise, precise, and extremely brief answer. 
+                        If the question is unclear, irrelevant to software engineering, or lacks a straightforward answer, begin your response with '${AIResponseHandler.UNCLEAR_PROMPT}' followed by a brief clarification.
+                        Otherwise, provide a direct answer without additional explanations or details.
+                        Question: ${prompt}`;
+
+        return this.getOpenAIResponse(content);
+    }
+
+    async generateDetailledSEAnswer(question: string, initialAnswer: string): Promise<string> {
+        // I should use the system role and messages array
+        const content = `Respond as a software engineering and programming expert. Here is a software engineering question and its brief answer. 
+                        Please provide more detailed information on this topic, in the limit of a paragraph or two maximum.
+                        Question: ${question}
+                        Initial Answer: ${initialAnswer}`;
+
         return this.getOpenAIResponse(content);
     }
 
@@ -83,7 +102,7 @@ export class AIResponseHandler {
                 },
                 {
                     headers: {
-                        'Authorization': `Bearer ${openaiKey}`,
+                        'Authorization': `Bearer ${openaiKey} `,
                         'Content-Type': 'application/json'
                     }
                 }
@@ -98,7 +117,7 @@ export class AIResponseHandler {
     }
 
     private cleanApiResponse(response: string): string {
-        // This regex matches a backtick sequence (```) followed by any word (like 'bash', 'python', etc.) and a space, or just the backticks alone.
+        // This regex matches a backtick sequence (```) followed by any word(like 'bash', 'python', etc.) and a space, or just the backticks alone.
         const cleanedResponse = response.replace(/^```(\w+\s)?/, '').trim();
         return cleanedResponse;
     }

@@ -55,6 +55,11 @@ export class HokusPokusCLI {
             .command('code <code_prompt>')
             .description('Generate a snippet of code in the specified language or tool')
             .action((code_prompt) => this.handleCodeCommand(code_prompt));
+
+        this.program
+            .command('question <question_prompt>')
+            .description('Ask a general software engineering question')
+            .action((question_prompt) => this.handleQuestionCommand(question_prompt));
     }
 
     private async verifyOpenAIKey(): Promise<boolean> {
@@ -183,6 +188,38 @@ export class HokusPokusCLI {
             console.error('Error in generating code snippet :', error);
         }
     }
+
+    private async handleQuestionCommand(prompt: string) {
+        if (!await this.verifyOpenAIKey()) return;
+
+        try {
+            const seAnswer = await this.commandGenerator.generateSEAnswer(prompt);
+
+            if (this.commandGenerator.isUserPromptUnclear(seAnswer)) {
+                await this.handleUserPromptUnclear(seAnswer);
+                return;
+            }
+            console.log(`\nShort Answer:\n\n ${seAnswer}\n`);
+
+            const userResponse = await inquirer.prompt([
+                {
+                    type: 'list',
+                    name: 'nextAction',
+                    message: 'Would you like to ask for more details or thank the guru for the wisdom?',
+                    choices: ['💰 Thank the guru for his wisdom and exit', '🧠 Ask for more details']
+                }
+            ]);
+
+            if (userResponse.nextAction === '🧠 Ask for more details') {
+                const detailledSEAnswer = await this.commandGenerator.generateDetailledSEAnswer(prompt, seAnswer);
+
+                console.log(`\nLong Answer:\n\n ${detailledSEAnswer}\n`);
+            }
+        } catch (error) {
+            console.error('Error in processing your question:', error);
+        }
+    }
+
 
     private async handleUserPromptUnclear(aiResponse: string): Promise<void> {
         await inquirer.prompt([
