@@ -16,7 +16,8 @@ export class AIResponseHandler {
                          If you are able to find a corresponding CLI command, reply only with the command in one line and nothing else. Do not give further explanation, the CLI command is enough.
                          If you are not able to generate a command, reply by saying first '${AIResponseHandler.UNCLEAR_PROMPT}' 
                          followed by an explanation or suggestions on how to accomplish the task: ${prompt}`;
-        return this.getOpenAIResponse(content);
+
+        return this.getOpenAIResponse(this.cleanApiResponse(content));
     }
 
     async generateManual(prompt: string): Promise<string> {
@@ -60,7 +61,7 @@ export class AIResponseHandler {
     }
 
 
-    isUserPromptUnclear(response: string): boolean {
+    public isUserPromptUnclear(response: string): boolean {
         return response.startsWith(AIResponseHandler.UNCLEAR_PROMPT);
     }
 
@@ -94,6 +95,12 @@ export class AIResponseHandler {
             spinner.stop();
             throw error; // Rethrow the error to be handled by the caller
         }
+    }
+
+    private cleanApiResponse(response: string): string {
+        // This regex matches a backtick sequence (```) followed by any word (like 'bash', 'python', etc.) and a space, or just the backticks alone.
+        const cleanedResponse = response.replace(/^```(\w+\s)?/, '').trim();
+        return cleanedResponse;
     }
 
     private getRandomSpinnerMessage(): string {
