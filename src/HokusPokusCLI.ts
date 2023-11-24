@@ -35,40 +35,29 @@ export class HokusPokusCLI {
             .action(() => this.configManager.configure());
 
         this.program
-            .option('-t, --tool <type>', 'Specify the CLI tool (e.g., aws, gcp, git, ...)')
-            .option('-m, --man <command_prompt>', 'Get the latest manual for a specific command')
-            .option('-s, --script <script_prompt>', 'Generate a script in the specified language or tool')
-            .option('-c, --code <code_prompt>', 'Generate a snippet of code in the specified language or tool')
-            .argument('[prompt]', 'User prompt for generating a command')
-            .action((prompt, options) => {
-                if (!options || Object.keys(options).length == 0 ||
-                    (!options.man && !options.script && !options.code && !options.tool)) {
-                    console.log(`Error: No option provided.\n\nUse 'hokuspokus --help' for more information on the commands and options available.`);
-                    return;
-                }
+            .command('cli <cli_prompt>')
+            .description('Translate a description to a CLI command')
+            .action((cli_prompt) => this.handleCliCommand(cli_prompt));
 
-                if (options.man) {
-                    this.handleManualCommand(options.man);
-                    return;
-                }
+        this.program
+            .command('man <manual_prompt>')
+            .description('Get the latest manual for a specific command')
+            .action((manual_prompt) => this.handleManualCommand(manual_prompt));
 
-                if (options.script) {
-                    this.handleScriptCommand(options.script);
-                    return;
-                }
+        this.program
+            .command('script <script_prompt>')
+            .description('Generate a script in the specified language or tool')
+            .action((script_prompt) => this.handleScriptCommand(script_prompt));
 
-                if (options.code) {
-                    this.handleCodeCommand(options.code);
-                    return;
-                }
-
-                this.handleTranslateTextToCLICommand(prompt, options.tool);
-            });
+        this.program
+            .command('code <code_prompt>')
+            .description('Generate a snippet of code in the specified language or tool')
+            .action((code_prompt) => this.handleCodeCommand(code_prompt));
     }
 
-    private async handleTranslateTextToCLICommand(prompt: string, tool: string) {
+    private async handleCliCommand(prompt: string) {
         try {
-            const cliAIReponse = await this.commandGenerator.generateCLI(prompt, tool);
+            const cliAIReponse = await this.commandGenerator.generateCLI(prompt);
 
             if (this.commandGenerator.isUserPromptUnclear(cliAIReponse)) {
                 await this.handleUserPromptUnclear(cliAIReponse);

@@ -11,8 +11,8 @@ export class AIResponseHandler {
         this.configManager = configManager;
     }
 
-    async generateCLI(prompt: string, tool: string): Promise<string> {
-        const content = `Translate the following to an ${tool} CLI command. 
+    async generateCLI(prompt: string): Promise<string> {
+        const content = `Translate the following to a CLI command. 
                          If you are able to find a corresponding CLI command, reply only with the command in one line and nothing else. Do not give further explanation, the CLI command is enough.
                          If you are not able to generate a command, reply by saying first '${AIResponseHandler.UNCLEAR_PROMPT}' 
                          followed by an explanation or suggestions on how to accomplish the task: ${prompt}`;
