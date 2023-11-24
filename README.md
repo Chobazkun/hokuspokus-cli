@@ -6,10 +6,9 @@
 
 ## Features
 - **Configure OpenAI API Key 🔑**: Set up your OpenAI API key for the tool.
-- **Translate Descriptions to CLI Commands 💬**: Input a description and get a suggested CLI command.
-- **Command Execution Confirmation ✅**: Users can choose to execute the suggested command directly from the CLI.
-- **Fetching Manuals 📚**: Retrieve the latest manual for a specific command based on a description.
-- **Generating Scripts 📜**: Create scripts in various programming languages or tools based on your description.
+- **Translate Descriptions to CLI Commands 💬**: Input a description and get a suggested CLI command. Users can choose to execute the suggested command directly from the CLI.
+- **Fetching Manuals and Documentations 📚**: Retrieve the latest manual or documentation for a specific command or tool based on a description.
+- **Generating Scripts 📜**: Create scripts in various programming languages or tools based on your description. The tool offers the posibility to directly save the script.
 - **Generating Code Snippets 🧩**: Generate short code snippets for quick tasks.
 
 ## Installation
@@ -32,23 +31,22 @@ If you are a developer and want to contribute to `hokuspokus-cli`, clone the rep
 - **Configuration**:
   - Run `hokuspokus configure` to set up your OpenAI API key.
 
-- **Translating Text to CLI commands**:
-  - Run `hokuspokus -t <tool> "<prompt>"` to receive a suggested CLI command for your description on the chosen tool.
-    - `<tool>`: The CLI tool for which you want to generate a command (e.g., aws, gcp).
-    - `<prompt>`: Your description of the task.
+- **Translating Text to CLI Commands**:
+  - Run `hokuspokus cli "<cli_prompt>"` to receive a suggested CLI command for your description.
+    - `<cli_prompt>`: Your description of the task.
   - Confirm execution of the command directly within the CLI.
 
 - **Fetching Manuals**:
-  - Use `hokuspokus -m "<command_prompt>"` to get the latest manual for a specific command.
-    - `<command_prompt>`: Describe the command for which you need a manual.
+  - Run `hokuspokus man "<manual_prompt>"` to get the latest manual or documentation for a specific command or tool.
+    - `<manual_prompt>`: Describe the command for which you need a manual.
 
 - **Generating Scripts**:
-  - Run `hokuspokus -s "<script_prompt>"` to generate a script in the specified language or tool based on your prompt.
+  - Run `hokuspokus script "<script_prompt>"` to generate a script based on your prompt.
     - `<script_prompt>`: Describe the task for which you need a script.
   - You will be prompted to save the script to a file.
 
 - **Generating Code Snippets**:
-  - Use `hokuspokus -c "<code_prompt>"` to generate a short code snippet based on your prompt.
+  - Run `hokuspokus code "<code_prompt>"` to generate a short code snippet based on your prompt.
     - `<code_prompt>`: Describe the task for which you need a code snippet.
   - The snippet will be displayed directly in the CLI.
 
@@ -59,16 +57,16 @@ If you are a developer and want to contribute to `hokuspokus-cli`, clone the rep
 hokuspokus configure
 
 # Translate Text to CLI Command
-hokuspokus -t aws "describe all instances in the us-east-1 region"
+hokuspokus cli "describe all instances in the us-east-1 region"
 
 # Fetch Command Manual
-hokuspokus -m "manual for git commit command"
+hokuspokus man "manual for git commit command"
 
 # Generate a Script
-hokuspokus -s "Python script to sort a list of numbers"
+hokuspokus script "Python script to sort a list of numbers"
 
 # Generate a Code Snippet
-hokuspokus -c "JavaScript function to reverse a string"
+hokuspokus code "JavaScript function to reverse a string"
 ```
 
 ## Contributing
