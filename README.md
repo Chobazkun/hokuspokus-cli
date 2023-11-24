@@ -68,7 +68,7 @@ If you are a developer and want to contribute to `hokuspokus-cli`, clone the rep
 hokuspokus configure
 
 # Translate Text to CLI Command
-hokuspokus cli "describe all instances in the us-east-1 region"
+hokuspokus cli "aws cli command to describe all instances in the us-east-1 region"
 
 # Fetch Command Manual
 hokuspokus man "manual for git commit command"
