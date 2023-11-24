@@ -1,9 +1,11 @@
 import { Command } from 'commander';
-import { AIResponseHandler } from './AIResponseHandler.js';
-import { ConfigurationManager } from './ConfigurationManager.js';
 import { exec } from 'child_process';
 import fs from 'fs/promises';
 import inquirer from 'inquirer';
+import clipboardy from 'clipboardy';
+
+import { AIResponseHandler } from './AIResponseHandler.js';
+import { ConfigurationManager } from './ConfigurationManager.js';
 import packageJson from '../package.json';
 
 export class HokusPokusCLI {
@@ -74,12 +76,14 @@ export class HokusPokusCLI {
                 return;
             }
 
+            clipboardy.writeSync(cliAIReponse);
+
             const userResponse = await inquirer.prompt([
                 {
                     type: 'confirm',
                     name: 'executeCommand',
-                    message: `Do you want to use the following CLI command? \n\n${cliAIReponse}`,
-                    default: false
+                    message: `The following command has been copied to your clipboard. You can paste and edit it.\n\n${cliAIReponse}\n\nDo you want to use the following CLI command? `,
+                    default: true
                 }
             ]);
 
