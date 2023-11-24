@@ -20,11 +20,11 @@ export class AIResponseHandler {
     }
 
     async generateManual(prompt: string): Promise<string> {
-        const content = `I need the manual for a CLI command based on the following description. 
-                         Please provide the complete manual for the command. 
-                         If the version isn't specified in the description, provide the manual of the latest version of the CLI command.
-                         If a direct manual is available for this command, include only the manual content. 
-                         If there's no specific manual or the command is unclear, start your response with '${AIResponseHandler.UNCLEAR_PROMPT}', 
+        const content = `I need the manual or the documentation for the CLI command, the tool or the element mentioned in the following description. 
+                         Please provide the complete manual if it is a command. 
+                         If it is something else, provide the main documentation with only the essential explanations.
+                         If the version isn't specified in the description, provide the manual of the latest version.
+                         If there's no specific manual/documentation or the command is unclear, start your response with '${AIResponseHandler.UNCLEAR_PROMPT}', 
                          followed by an explanation or suggestions on how to accomplish the task: ${prompt}`;
         return this.getOpenAIResponse(content);
     }
