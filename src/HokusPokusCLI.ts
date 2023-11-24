@@ -41,6 +41,12 @@ export class HokusPokusCLI {
             .option('-c, --code <code_prompt>', 'Generate a snippet of code in the specified language or tool')
             .argument('[prompt]', 'User prompt for generating a command')
             .action((prompt, options) => {
+                if (!options || Object.keys(options).length == 0 ||
+                    (!options.man && !options.script && !options.code && !options.tool)) {
+                    console.log(`Error: No option provided.\n\nUse 'hokuspokus --help' for more information on the commands and options available.`);
+                    return;
+                }
+
                 if (options.man) {
                     this.handleManualCommand(options.man);
                     return;
