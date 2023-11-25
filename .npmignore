@@ -1,10 +1,11 @@
 # Node modules
 node_modules/
 
-# Environment variables and configurations
+# Environment variables
 .env
 config.json
 
 # Build output
 dist/
 .parcel-cache/
+coverage/

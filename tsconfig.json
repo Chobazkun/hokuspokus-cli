@@ -108,5 +108,5 @@
     "outDir": "./dist",  // Compiled JS files directory
     "rootDir": "./"  // TypeScript source files directory  
   },
-  "include": ["src/*"]
+  "include": ["src/*", "tests/*"]
 }

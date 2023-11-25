@@ -132,8 +132,8 @@ export class AIResponseHandler {
     }
 
     private cleanApiResponse(response: string): string {
-        // This regex matches a backtick sequence (```) followed by any word(like 'bash', 'python', etc.) and a space, or just the backticks alone.
-        const cleanedResponse = response.replace(/^```(\w+\s)?/, '').trim();
+        // This regex will match both starting and ending backtick sequences.
+        const cleanedResponse = response.replace(/^```(\w+\s)?|```$/g, '').trim();
         return cleanedResponse;
     }
 
@@ -170,7 +170,6 @@ export class AIResponseHandler {
             '...Decoding the enigmas of encryption...',
             '...Venturing into the realm of recursive spells...'
         ];
-
 
         return messages[Math.floor(Math.random() * messages.length)];
     }

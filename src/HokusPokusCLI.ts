@@ -4,19 +4,19 @@ import fs from 'fs/promises';
 import inquirer from 'inquirer';
 import clipboardy from 'clipboardy';
 
-import { AIResponseHandler } from './AIResponseHandler.js';
-import { ConfigurationManager } from './ConfigurationManager.js';
+import { AIResponseHandler } from '../src/AIResponseHandler';
+import { ConfigurationManager } from '../src/ConfigurationManager';
 import packageJson from '../package.json';
 
 export class HokusPokusCLI {
     program: Command;
-    commandGenerator: AIResponseHandler;
+    aiResponseHandler: AIResponseHandler;
     configManager: ConfigurationManager;
 
     constructor() {
         this.program = new Command();
         this.configManager = new ConfigurationManager();
-        this.commandGenerator = new AIResponseHandler(this.configManager);
+        this.aiResponseHandler = new AIResponseHandler(this.configManager);
         this.setupCommands();
     }
 
@@ -79,15 +79,15 @@ export class HokusPokusCLI {
         if (!await this.verifyOpenAIKey()) return;
 
         try {
-            const cliAIReponse = await this.commandGenerator.generateCLI(prompt);
+            const cliAIReponse = await this.aiResponseHandler.generateCLI(prompt);
 
-            if (this.commandGenerator.isUserPromptUnclear(cliAIReponse)) {
+            if (this.aiResponseHandler.isUserPromptUnclear(cliAIReponse)) {
                 await this.handleUserPromptUnclear(cliAIReponse);
                 return;
             }
 
             clipboardy.writeSync(cliAIReponse);
-
+            
             const userResponse = await inquirer.prompt([
                 {
                     type: 'confirm',
@@ -96,7 +96,7 @@ export class HokusPokusCLI {
                     default: true
                 }
             ]);
-
+            
             if (userResponse.executeCommand) {
                 exec(cliAIReponse, (error, stdout, stderr) => {
                     if (error) {
@@ -119,9 +119,9 @@ export class HokusPokusCLI {
         if (!await this.verifyOpenAIKey()) return;
 
         try {
-            const manualAIResponse = await this.commandGenerator.generateManual(prompt);
+            const manualAIResponse = await this.aiResponseHandler.generateManual(prompt);
 
-            if (this.commandGenerator.isUserPromptUnclear(manualAIResponse)) {
+            if (this.aiResponseHandler.isUserPromptUnclear(manualAIResponse)) {
                 await this.handleUserPromptUnclear(manualAIResponse);
                 return;
             }
@@ -143,13 +143,14 @@ export class HokusPokusCLI {
         if (!await this.verifyOpenAIKey()) return;
 
         try {
-            const { filename: filenameAIReponse, script: scriptAIResponse } = await this.commandGenerator.generateScript(prompt);
+            const { filename: filenameAIReponse, script: scriptAIResponse } = await this.aiResponseHandler.generateScript(prompt);
 
-            if (this.commandGenerator.isUserPromptUnclear(scriptAIResponse)) {
+            if (this.aiResponseHandler.isUserPromptUnclear(scriptAIResponse)) {
                 await this.handleUserPromptUnclear(scriptAIResponse);
                 return;
             }
-
+            
+            // How about redirecting the user directly to an interface where he can save/edit his content ?
             console.log("Generated Script:\n", scriptAIResponse);
 
             const userResponse = await inquirer.prompt([
@@ -174,9 +175,9 @@ export class HokusPokusCLI {
         if (!await this.verifyOpenAIKey()) return;
 
         try {
-            const codeAIReponse = await this.commandGenerator.generateCode(prompt);
+            const codeAIReponse = await this.aiResponseHandler.generateCode(prompt);
 
-            if (this.commandGenerator.isUserPromptUnclear(codeAIReponse)) {
+            if (this.aiResponseHandler.isUserPromptUnclear(codeAIReponse)) {
                 await this.handleUserPromptUnclear(codeAIReponse);
                 return;
             }
@@ -198,9 +199,9 @@ export class HokusPokusCLI {
         if (!await this.verifyOpenAIKey()) return;
 
         try {
-            const seAnswer = await this.commandGenerator.generateSEAnswer(prompt);
+            const seAnswer = await this.aiResponseHandler.generateSEAnswer(prompt);
 
-            if (this.commandGenerator.isUserPromptUnclear(seAnswer)) {
+            if (this.aiResponseHandler.isUserPromptUnclear(seAnswer)) {
                 await this.handleUserPromptUnclear(seAnswer);
                 return;
             }
@@ -216,7 +217,7 @@ export class HokusPokusCLI {
             ]);
 
             if (userResponse.nextAction === '🧠 Ask for more details') {
-                const detailledSEAnswer = await this.commandGenerator.generateDetailledSEAnswer(prompt, seAnswer);
+                const detailledSEAnswer = await this.aiResponseHandler.generateDetailledSEAnswer(prompt, seAnswer);
 
                 console.log(`\nLong Answer:\n\n ${detailledSEAnswer}\n`);
             }
@@ -235,7 +236,7 @@ export class HokusPokusCLI {
             }
 
             try {
-                const review = await this.commandGenerator.reviewCode(stdout);
+                const review = await this.aiResponseHandler.reviewCode(stdout);
                 console.log('\nCode Review:\n\n', review);
             } catch (apiError) {
                 console.error('Error in code review:', apiError);
