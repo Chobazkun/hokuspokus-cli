@@ -3,7 +3,7 @@ import ora from 'ora';
 import { ConfigurationManager } from './ConfigurationManager.js';
 
 export class AIResponseHandler {
-    static UNCLEAR_PROMPT: string = 'UNCLEAR PROMPT : ';
+    static UNCLEAR_PROMPT: string = 'UNCLEAR PROMPT: ';
 
     configManager: ConfigurationManager;
 
