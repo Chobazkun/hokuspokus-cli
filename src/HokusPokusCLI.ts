@@ -60,6 +60,11 @@ export class HokusPokusCLI {
             .command('question <question_prompt>')
             .description('Ask a general software engineering question')
             .action((question_prompt) => this.handleQuestionCommand(question_prompt));
+
+        this.program
+            .command('code-review')
+            .description('Review recent code changes in the current folder. Requires git command to be installed.')
+            .action(() => this.handleCodeReview());
     }
 
     private async verifyOpenAIKey(): Promise<boolean> {
@@ -218,6 +223,24 @@ export class HokusPokusCLI {
         } catch (error) {
             console.error('Error in processing your question:', error);
         }
+    }
+
+    private async handleCodeReview() {
+        if (!await this.verifyOpenAIKey()) return;
+
+        exec('git diff', async (error, stdout, stderr) => {
+            if (error || stderr) {
+                console.error('Error executing git diff:', error || stderr);
+                return;
+            }
+
+            try {
+                const review = await this.commandGenerator.reviewCode(stdout);
+                console.log('\nCode Review:\n\n', review);
+            } catch (apiError) {
+                console.error('Error in code review:', apiError);
+            }
+        });
     }
 
 

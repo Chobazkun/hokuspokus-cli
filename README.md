@@ -12,6 +12,7 @@
 - **Fetching Manuals and Documentations 📚**: Retrieve the latest manual or documentation for a specific command or tool based on a description.
 - **Generating Scripts 📜**: Create scripts in various programming languages or tools based on your description. The tool offers the posibility to directly save the script.
 - **Generating Code Snippets 🧩**: Generate short code snippets for quick tasks.
+- **Code Review for Recent Changes 🔍**: Review recent code changes in the current folder for code quality, style, best practices, and more. Requires Git to be installed and executed in a git repository.
 - **Asking Software Engineering Questions 🧠**: Pose questions about software engineering and receive precise, expert answers. Users have the option to delve deeper into the topic or conclude the interaction after receiving the initial response.
 
 ## Installation
@@ -56,6 +57,9 @@ If you are a developer and want to contribute to `hokuspokus-cli`, clone the rep
     - `<code_prompt>`: Describe the task for which you need a code snippet.
   - The snippet will be displayed directly in the CLI.
 
+- **Code Review**:
+  - Run `hokuspokus code-review` to perform an AI-powered review of your recent code changes. This feature provides feedback on various aspects like code quality, coding style, adherence to principles like SOLID and DRY, potential refactoring, and unit testing.
+
 - **Asking Software Engineering Questions**:
   - Run `hokuspokus question "<question_prompt>"` to ask a software engineering-related question and receive a concise, expert answer.
     - `<question_prompt>`: Your specific question about software engineering.
@@ -78,6 +82,9 @@ hokuspokus script "Python script to sort a list of numbers"
 
 # Generate a Code Snippet
 hokuspokus code "JavaScript function to reverse a string"
+
+# Perform a Code Review
+hokuspokus code-review
 
 # Ask a Software Engineering Question
 hokuspokus question "What is the difference between interface and abstract class in Java?"
