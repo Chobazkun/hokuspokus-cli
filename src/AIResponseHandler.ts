@@ -80,7 +80,7 @@ export class AIResponseHandler {
     }
 
     async reviewCode(diff: string): Promise<string> {
-        const prompt = `As a seasoned expert in software engineering and programming, conduct a thorough review of the following code changes. 
+        const content = `As a seasoned expert in software engineering and programming, conduct a thorough review of the following code changes. 
                         Focus on providing detailed feedback in the following areas:
                         1. Code Quality: Evaluate error handling, efficiency, scalability, and potential bugs or security vulnerabilities.
                         2. Coding Style: Assess adherence to best practices, consistency, and the principles of clean code and clean architecture.
@@ -90,10 +90,9 @@ export class AIResponseHandler {
                         6. Unit Testing: Evaluate the existing unit tests and suggest improvements or additional tests needed.
 
                         Code Changes:
-                        ${diff}
-                        `;
+                        ${diff}`;
 
-        return this.getOpenAIResponse(prompt);
+        return this.getOpenAIResponse(content);
     }
 
     public isUserPromptUnclear(response: string): boolean {
