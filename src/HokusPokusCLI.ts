@@ -68,14 +68,14 @@ export class HokusPokusCLI {
             .action(() => this.handleCodeReview());
 
         this.program
-            .command('debug <error_message>')
-            .description('Debug an issue with the help of the Great Wizard. This command scans all files and subfiles in the current directory for context.')
-            .action((error_message) => this.handleDebugCommand(error_message));
+            .command('debug <error_message> [filePaths...]')
+            .description('Debug an issue with the help of the Great Wizard. Scans specified files, or all files in the directory if none are specified.')
+            .action((error_message, filePaths) => this.handleDebugCommand(error_message, filePaths));
 
         this.program
-            .command('develop <feature_description>')
-            .description('Generate a development plan for a new feature with the help of the Great Wizard. This command scans all files and subfiles in the current directory for context.')
-            .action((feature_description) => this.handleDevelopCommand(feature_description));
+            .command('develop <feature_description> [filePaths...]')
+            .description('Generate a development plan for a new feature with the help of the Great Wizard. Scans specified files, or all files in the directory if none are specified.')
+            .action((feature_description, filePaths) => this.handleDevelopCommand(feature_description, filePaths));
 
     }
 
@@ -256,49 +256,87 @@ export class HokusPokusCLI {
         });
     }
 
-    private async handleDebugCommand(error_message: string) {
+    private async handleDebugCommand(error_message: string, filePaths?: string[]) {
         if (!await this.verifyOpenAIKey()) return;
 
         try {
-            const folderContents = await this.getFolderContents('.');
+            const folderContents = filePaths && filePaths.length > 0
+                ? await this.getSpecifiedFilesContents(filePaths)
+                : await this.getFolderContents('.');
+
             const debugResponse = await this.aiResponseHandler.generateDebugResponse(error_message, folderContents);
 
-            console.log('\nThe Wizard Debugging Opinion:\n\n', debugResponse);
+            if (this.aiResponseHandler.isUserPromptUnclear(debugResponse)) {
+                await this.handleUserPromptUnclear(debugResponse);
+                return;
+            }
+
+            console.log('\nThe Great Wizard Debugging Opinion:\n\n', debugResponse);
         } catch (error) {
             console.error('Error in debugging:', error);
         }
     }
 
-    private async handleDevelopCommand(feature_description: string) {
+    private async handleDevelopCommand(feature_description: string, filePaths?: string[]) {
         if (!await this.verifyOpenAIKey()) return;
-    
+
         try {
-            const folderContents = await this.getFolderContents('.');
-            const aiResponse = await this.aiResponseHandler.generateDevelopmentPlan(feature_description, folderContents);
-            console.log('\nThe Wizard Development Plan:\n\n', aiResponse);
+            const folderContents = filePaths && filePaths.length > 0
+                ? await this.getSpecifiedFilesContents(filePaths)
+                : await this.getFolderContents('.');
+
+            const developResponse = await this.aiResponseHandler.generateDevelopmentPlan(feature_description, folderContents);
+
+            if (this.aiResponseHandler.isUserPromptUnclear(developResponse)) {
+                await this.handleUserPromptUnclear(developResponse);
+                return;
+            }
+
+            console.log('\nThe Great Wizard Development Plan:\n\n', developResponse);
         } catch (error) {
             console.error('Error in developing feature:', error);
         }
     }
 
     private async getFolderContents(dir: string): Promise<string> {
-        const entries = await fs.readdir(dir, { withFileTypes: true });
-        const files = entries.filter(file => !file.isDirectory());
-        const folders = entries.filter(folder => folder.isDirectory());
+        try {
+            const entries = await fs.readdir(dir, { withFileTypes: true });
+            const files = entries.filter(file => !file.isDirectory());
+            const folders = entries.filter(folder => folder.isDirectory());
 
-        const fileContents = await Promise.all(files.map(async file => {
-            const filePath = path.join(dir, file.name);
-            const content = await fs.readFile(filePath, 'utf-8');
-            return `File: ${file.name}\n${content}`;
-        }));
+            const fileContents = await Promise.all(files.map(async file => {
+                try {
+                    const filePath = path.join(dir, file.name);
+                    const content = await fs.readFile(filePath, 'utf-8');
+                    return `File: ${file.name}\n${content}`;
+                } catch (readFileError) {
+                    console.error(`Error reading file ${file.name}\n`);
+                    throw readFileError;
+                }
+            }));
 
-        const folderContents = await Promise.all(folders.map(async folder => {
-            return this.getFolderContents(path.join(dir, folder.name));
-        }));
+            const folderContents = await Promise.all(folders.map(async folder => {
+                return this.getFolderContents(path.join(dir, folder.name));
+            }));
 
-        return fileContents.concat(folderContents.flat()).join('\n\n');
+            return fileContents.concat(folderContents.flat()).join('\n\n');
+        } catch (readdirError) {
+            console.error(`Error reading directory ${dir}\n`);
+            throw readdirError;
+        }
     }
 
+    private async getSpecifiedFilesContents(filePaths: string[]): Promise<string> {
+        return Promise.all(filePaths.map(async (filePath) => {
+            try {
+                const content = await fs.readFile(filePath, 'utf-8');
+                return `File: ${path.basename(filePath)}\n${content}`;
+            } catch (error) {
+                console.error(`Error reading file ${filePath}\n`);
+                throw error;
+            }
+        })).then(contents => contents.filter(c => c).join('\n\n'));
+    }
 
     private async handleUserPromptUnclear(aiResponse: string): Promise<void> {
         await inquirer.prompt([

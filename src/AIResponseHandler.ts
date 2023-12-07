@@ -101,7 +101,8 @@ export class AIResponseHandler {
                         Error encountered: ${error}
                         Project Files:
                         ${folderContents}
-                        Please provide a direct and succinct suggestion for identifying the cause of the error and how to fix it.`;
+                        If the question is unclear, irrelevant to software engineering, or lacks a straightforward answer, begin your response with '${AIResponseHandler.UNCLEAR_PROMPT}' followed by a brief clarification.
+                        Otherwise, please provide a direct and succinct suggestion for identifying the cause of the error and how to fix it.`;
 
         return this.getOpenAIResponse(content);
     }
@@ -112,7 +113,8 @@ export class AIResponseHandler {
                         Current Project Files:
                         Each file's content is prefixed with 'File: <filename.ext>', followed by the content of the file.
                         ${folderContents}
-                        Please provide a concise and actionable plan for developing this feature, including any necessary changes or additions to the code.`;
+                        If the question is unclear, irrelevant to software engineering, or lacks a straightforward answer, begin your response with '${AIResponseHandler.UNCLEAR_PROMPT}' followed by a brief clarification.
+                        Otherwise please provide a concise and actionable plan for developing this feature, including any necessary changes or additions to the code.`;
 
         return this.getOpenAIResponse(content);
     }

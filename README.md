@@ -14,8 +14,8 @@
 - **Generating Code Snippets 🧩**: Generate short code snippets for quick tasks.
 - **Code Review for Recent Changes 🔍**: Review recent code changes in the current folder for code quality, style, best practices, and more. Requires Git to be installed and executed in a git repository.
 - **Asking Software Engineering Questions 🧠**: Pose questions about software engineering and receive precise, expert answers. Users have the option to delve deeper into the topic or conclude the interaction after receiving the initial response.
-- **Debugging Code 🐛**: Debug issues by analyzing error messages and the content of the current directory's files. This command scans all files and subfiles for context to provide a solution.
-- **Developing Features 🛠️**: Generate a development plan for a new feature based on its description and the current project's context. This command scans all files and subfiles in the directory for a comprehensive approach.
+- **Debugging Code 🐛**: Debug issues by analyzing error messages and the content of either the current directory's files or specified files. This command can scan all files and subfiles for context or target specific files if their paths are provided.
+- **Developing Features 🛠️**: Generate a development plan for a new feature based on its description and the current project's context. This command can scan all files and subfiles in the directory for a comprehensive approach or focus on specific files if their paths are provided.
 
 ## Installation
 
@@ -68,7 +68,7 @@ If you are a developer and want to contribute to `hokuspokus-cli`, clone the rep
   - After receiving the answer, you can choose to ask for more details or exit.
 
 - **Debugging Code**:
-  - Run hokuspokus debug `<error_message>` to analyze an error message and the contents of your current directory for debugging insights.
+  - Run hokuspokus debug `<error_message>` to analyze an error message and the contents of your current directory or specified files for debugging insights.
     - `<error_message>`: The error message you are trying to debug.
 
 - **Developing Features**:
@@ -100,7 +100,7 @@ hokuspokus code-review
 hokuspokus question "What is the difference between interface and abstract class in Java?"
 
 # Debugging Code
-hokuspokus debug "TypeError: undefined is not a function"
+hokuspokus debug "TypeError: undefined is not a function" src/app.js
 
 # Developing a New Feature
 hokuspokus develop "Implement a new authentication system using OAuth"
