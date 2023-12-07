@@ -95,6 +95,18 @@ export class AIResponseHandler {
         return this.getOpenAIResponse(content);
     }
 
+    async generateDebugResponse(error: string, folderContents: string): Promise<string> {
+        const content = `I need a concise and brief explanation for debugging a coding issue. Here's the error encountered and the contents of the project files.
+                        Each file's content is prefixed with 'File: <filename.ext>', followed by the content of the file.
+                        Error encountered: ${error}
+                        Project Files:
+                        ${folderContents}
+                        Please provide a direct and succinct suggestion for identifying the cause of the error and how to fix it.`;
+
+        return this.getOpenAIResponse(content);
+    }
+
+
     public isUserPromptUnclear(response: string): boolean {
         return response.startsWith(AIResponseHandler.UNCLEAR_PROMPT);
     }

@@ -3,6 +3,7 @@ import { exec } from 'child_process';
 import fs from 'fs/promises';
 import inquirer from 'inquirer';
 import clipboardy from 'clipboardy';
+import path from 'path';
 
 import { AIResponseHandler } from '../src/AIResponseHandler';
 import { ConfigurationManager } from '../src/ConfigurationManager';
@@ -58,13 +59,18 @@ export class HokusPokusCLI {
 
         this.program
             .command('question <question_prompt>')
-            .description('Ask a general software engineering question')
+            .description('Ask the Wize Guru a general software engineering question')
             .action((question_prompt) => this.handleQuestionCommand(question_prompt));
 
         this.program
             .command('code-review')
             .description('Review recent code changes in the current folder. Requires git command to be installed.')
             .action(() => this.handleCodeReview());
+
+        this.program
+            .command('debug <error_message>')
+            .description('Debug an issue with the help of the Great Wizard. This command scans all files and subfiles in the current directory to create context for the debugging process.')
+            .action((error_message) => this.handleDebugCommand(error_message));
     }
 
     private async verifyOpenAIKey(): Promise<boolean> {
@@ -87,7 +93,7 @@ export class HokusPokusCLI {
             }
 
             clipboardy.writeSync(cliAIReponse);
-            
+
             const userResponse = await inquirer.prompt([
                 {
                     type: 'confirm',
@@ -96,7 +102,7 @@ export class HokusPokusCLI {
                     default: true
                 }
             ]);
-            
+
             if (userResponse.executeCommand) {
                 exec(cliAIReponse, (error, stdout, stderr) => {
                     if (error) {
@@ -149,7 +155,7 @@ export class HokusPokusCLI {
                 await this.handleUserPromptUnclear(scriptAIResponse);
                 return;
             }
-            
+
             // How about redirecting the user directly to an interface where he can save/edit his content ?
             console.log("Generated Script:\n", scriptAIResponse);
 
@@ -212,7 +218,7 @@ export class HokusPokusCLI {
                     type: 'list',
                     name: 'nextAction',
                     message: 'Would you like to ask for more details or thank the guru for the wisdom?',
-                    choices: ['💰 Thank the guru for his wisdom and exit', '🧠 Ask for more details']
+                    choices: ['💰 Thank the Wize Guru for his wisdom and leave', '🧠 Ask for more details']
                 }
             ]);
 
@@ -242,6 +248,37 @@ export class HokusPokusCLI {
                 console.error('Error in code review:', apiError);
             }
         });
+    }
+
+    private async handleDebugCommand(error_message: string) {
+        if (!await this.verifyOpenAIKey()) return;
+
+        try {
+            const folderContents = await this.getFolderContents('.');
+            const debugResponse = await this.aiResponseHandler.generateDebugResponse(error_message, folderContents);
+
+            console.log('\nThe Wizard debugging opinion:\n\n', debugResponse);
+        } catch (error) {
+            console.error('Error in debugging:', error);
+        }
+    }
+
+    private async getFolderContents(dir: string): Promise<string> {
+        const entries = await fs.readdir(dir, { withFileTypes: true });
+        const files = entries.filter(file => !file.isDirectory());
+        const folders = entries.filter(folder => folder.isDirectory());
+
+        const fileContents = await Promise.all(files.map(async file => {
+            const filePath = path.join(dir, file.name);
+            const content = await fs.readFile(filePath, 'utf-8');
+            return `File: ${file.name}\n${content}`;
+        }));
+
+        const folderContents = await Promise.all(folders.map(async folder => {
+            return this.getFolderContents(path.join(dir, folder.name));
+        }));
+
+        return fileContents.concat(folderContents.flat()).join('\n\n');
     }
 
 
