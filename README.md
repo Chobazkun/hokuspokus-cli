@@ -14,6 +14,8 @@
 - **Generating Code Snippets 🧩**: Generate short code snippets for quick tasks.
 - **Code Review for Recent Changes 🔍**: Review recent code changes in the current folder for code quality, style, best practices, and more. Requires Git to be installed and executed in a git repository.
 - **Asking Software Engineering Questions 🧠**: Pose questions about software engineering and receive precise, expert answers. Users have the option to delve deeper into the topic or conclude the interaction after receiving the initial response.
+- **Debugging Code 🐛**: Debug issues by analyzing error messages and the content of the current directory's files. This command scans all files and subfiles for context to provide a solution.
+- **Developing Features 🛠️**: Generate a development plan for a new feature based on its description and the current project's context. This command scans all files and subfiles in the directory for a comprehensive approach.
 
 ## Installation
 
@@ -65,6 +67,14 @@ If you are a developer and want to contribute to `hokuspokus-cli`, clone the rep
     - `<question_prompt>`: Your specific question about software engineering.
   - After receiving the answer, you can choose to ask for more details or exit.
 
+- **Debugging Code**:
+  - Run hokuspokus debug `<error_message>` to analyze an error message and the contents of your current directory for debugging insights.
+    - `<error_message>`: The error message you are trying to debug.
+
+- **Developing Features**:
+  - Run hokuspokus develop `<feature_description>` to generate a development plan for a new feature based on the current project context.
+    - `<feature_description>`: Description of the feature you want to develop.
+
 ## Example
 
 ```bash
@@ -88,6 +98,12 @@ hokuspokus code-review
 
 # Ask a Software Engineering Question
 hokuspokus question "What is the difference between interface and abstract class in Java?"
+
+# Debugging Code
+hokuspokus debug "TypeError: undefined is not a function"
+
+# Developing a New Feature
+hokuspokus develop "Implement a new authentication system using OAuth"
 ```
 
 ## Contributing
