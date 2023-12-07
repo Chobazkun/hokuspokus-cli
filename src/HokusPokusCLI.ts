@@ -69,8 +69,14 @@ export class HokusPokusCLI {
 
         this.program
             .command('debug <error_message>')
-            .description('Debug an issue with the help of the Great Wizard. This command scans all files and subfiles in the current directory to create context for the debugging process.')
+            .description('Debug an issue with the help of the Great Wizard. This command scans all files and subfiles in the current directory for context.')
             .action((error_message) => this.handleDebugCommand(error_message));
+
+        this.program
+            .command('develop <feature_description>')
+            .description('Generate a development plan for a new feature with the help of the Great Wizard. This command scans all files and subfiles in the current directory for context.')
+            .action((feature_description) => this.handleDevelopCommand(feature_description));
+
     }
 
     private async verifyOpenAIKey(): Promise<boolean> {
@@ -257,9 +263,21 @@ export class HokusPokusCLI {
             const folderContents = await this.getFolderContents('.');
             const debugResponse = await this.aiResponseHandler.generateDebugResponse(error_message, folderContents);
 
-            console.log('\nThe Wizard debugging opinion:\n\n', debugResponse);
+            console.log('\nThe Wizard Debugging Opinion:\n\n', debugResponse);
         } catch (error) {
             console.error('Error in debugging:', error);
+        }
+    }
+
+    private async handleDevelopCommand(feature_description: string) {
+        if (!await this.verifyOpenAIKey()) return;
+    
+        try {
+            const folderContents = await this.getFolderContents('.');
+            const aiResponse = await this.aiResponseHandler.generateDevelopmentPlan(feature_description, folderContents);
+            console.log('\nThe Wizard Development Plan:\n\n', aiResponse);
+        } catch (error) {
+            console.error('Error in developing feature:', error);
         }
     }
 

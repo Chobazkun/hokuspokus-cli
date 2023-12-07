@@ -1,6 +1,6 @@
 {
   "name": "hokuspokus-cli",
-  "version": "0.1.8",
+  "version": "0.1.9",
   "description": "A minimalist companion designed for developers to boost their daily productivity 👨‍💻🚀",
   "main": "./dist/index.js",
   "type": "module",
