@@ -1,0 +1,2 @@
+const UNCLEAR_PROMPT = 'UNCLEAR PROMPT: ';
+export { UNCLEAR_PROMPT };
