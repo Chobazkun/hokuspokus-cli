@@ -24,7 +24,7 @@
     "license": "MIT",
     "repository": {
         "type": "git",
-        "url": "git+https://github.com/Chobazkun/hokuspokus-cli"
+        "url": "git+https://github.com/Chobazkun/hokuspokus-cli.git"
     },
     "homepage": "https://github.com/Chobazkun/hokuspokus-cli#readme",
     "bugs": {
@@ -65,6 +65,6 @@
         "node": ">= 18"
     },
     "bin": {
-        "hokuspokus": "./dist/index.js"
+        "hokuspokus": "dist/index.js"
     }
 }
